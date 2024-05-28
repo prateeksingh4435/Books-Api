@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 300px;
+            padding: 10px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 10px 20px;
+        }
+        .book-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .book-item {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px;
+            width: 200px;
+            text-align: center;
+        }
+        .book-item img {
+            max-width: 100%;
+            height: auto;
+        }
+        .error {
+            color: red;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Search for Books</h1>
+    <form method="get" action="{% url 'book_search' %}">
+        <input type="text" name="query" placeholder="Search for books...">
+        <button type="submit">Search</button>
+    </form>
+    {% if books %}
+        <h2>Results:</h2>
+        <div class="book-list">
+        {% for book in books.items %}
+            <div class="book-item">
+                {% if book.volumeInfo.imageLinks %}
+                    <img src="{{ book.volumeInfo.imageLinks.thumbnail }}" alt="{{ book.volumeInfo.title }}">
+                {% endif %}
+                <h3>{{ book.volumeInfo.title }}</h3>
+                <p>by {{ book.volumeInfo.authors|join:", " }}</p>
+                <p>{{ book.volumeInfo.description|truncatewords:20 }}</p>
+                {% if book.volumeInfo.averageRating %}
+                    <p>Rating: {{ book.volumeInfo.averageRating }} / 5</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+        </div>
+    {% elif error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+</body>
+</html>
